@@ -8,7 +8,8 @@ const connectDatabase = async (res) => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    return (db = client.db(dbName));
+    db = client.db(dbName);
+    return [db, client];
   } catch (error) {
     return "error";
   }

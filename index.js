@@ -3,13 +3,13 @@ const app = express();
 const port = 3001;
 const data = require("./data/data.js");
 const cors = require("cors");
-const connectDatabase = require("./helpers/connect.js");
+const connectDatabase = require("./utils/connect.js");
 const updateLeaderboard = require("./controllers/Leaderboard.js");
 
 app.use(express.json());
 app.use(cors());
 let db;
-
+let client;
 // Gibt die Daten aus data.js als JSON zurück
 app.get("/", (req, res) => {
   res.json(data);
@@ -20,7 +20,7 @@ app.post("/getAndUpdateLeaderboard", async (req, res) => {
   const data = req.body;
 
   if (!db) {
-    db = await connectDatabase(res);
+    [db, client] = await connectDatabase(res);
     if (db === null) {
       res.sendStatus(500).send("Verbindung zur Datenbank gescheitert");
       return;
@@ -31,7 +31,6 @@ app.post("/getAndUpdateLeaderboard", async (req, res) => {
   //setzen eines eventuellen Fehlers beim update, ansonsten wird undefinded wieder gegeben
   const isUpdateSucessful =
     req.body.name != (await updateLeaderboard(data, collection));
-
   try {
     const allEntries = await collection.find({}).toArray();
 
@@ -43,6 +42,8 @@ app.post("/getAndUpdateLeaderboard", async (req, res) => {
     });
   } catch {
     res.status(500).send("Fehler in der Datenbank");
+  } finally {
+    client.close();
   }
 });
 
@@ -50,3 +51,4 @@ app.post("/getAndUpdateLeaderboard", async (req, res) => {
 app.listen(port, async () => {
   console.log(`Server läuft auf Port ${port}`);
 });
+module.exports = app;
