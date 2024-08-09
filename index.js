@@ -18,21 +18,29 @@ app.get("/", (req, res) => {
 // Fügt neuen Highscore hinzu und verwaltet die Top 10 Highscores
 app.post("/getAndUpdateLeaderboard", async (req, res) => {
   const data = req.body;
-  let err;
 
   if (!db) {
-    db = await connectDatabase();
-    !db && res.sendStatus(500).send("Verbindung zur Datenbank gescheitert");
+    db = await connectDatabase(res);
+    if (db === null) {
+      res.sendStatus(500).send("Verbindung zur Datenbank gescheitert");
+      return;
+    }
   }
   const collection = await db.collection("highscore");
 
   //setzen eines eventuellen Fehlers beim update, ansonsten wird undefinded wieder gegeben
-  err = req.body.name != (await updateLeaderboard(data, collection));
+  const isUpdateSucessful =
+    req.body.name != (await updateLeaderboard(data, collection));
 
   try {
     const allEntries = await collection.find({}).toArray();
 
-    res.send({ leaderboard: allEntries, err });
+    res.send({
+      leaderboard: allEntries,
+      err: isUpdateSucessful
+        ? false
+        : "Es gab leider einen Fehler beim updaten der Datenbank",
+    });
   } catch {
     res.status(500).send("Fehler in der Datenbank");
   }

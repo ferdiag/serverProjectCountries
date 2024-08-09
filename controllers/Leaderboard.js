@@ -9,9 +9,10 @@ const updateLeaderboard = async (data, collection) => {
     if (count > 10) {
       await collection.findOneAndDelete({}, { sort: { points: 1 } });
     }
-    return null;
-  } catch {
-    return "Es gab leider einen Fehler beim updaten der Datenbank";
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
   }
 };
 module.exports = updateLeaderboard;
