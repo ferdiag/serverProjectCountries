@@ -4,43 +4,41 @@ const port = 3001;
 const data = require("./data/data.js");
 const cors = require("cors");
 const connectDatabase = require("./helpers/connect.js");
+const updateLeaderboard = require("./controllers/Leaderboard.js");
 
 app.use(express.json());
 app.use(cors());
 let db;
 
+// Gibt die Daten aus data.js als JSON zurück
 app.get("/", (req, res) => {
   res.json(data);
 });
 
-app.post("/updateHighscore", async (req, res) => {
+// Fügt neuen Highscore hinzu und verwaltet die Top 10 Highscores
+app.post("/getAndUpdateLeaderboard", async (req, res) => {
   const data = req.body;
+  let err;
+
+  if (!db) {
+    db = await connectDatabase();
+    !db && res.sendStatus(500).send("Verbindung zur Datenbank gescheitert");
+  }
+  const collection = await db.collection("highscore");
+
+  //setzen eines eventuellen Fehlers beim update, ansonsten wird undefinded wieder gegeben
+  err = req.body.name != (await updateLeaderboard(data, collection));
+
   try {
-    if (!db) {
-      db = await connectDatabase();
-      !db && res.sendStatus(500).send("Verbindung zur Datenbank gescheitert");
-    }
-    const collection = await db.collection("highscore");
-
-    await collection.insertOne(data);
-
-    const count = await collection.countDocuments();
     const allEntries = await collection.find({}).toArray();
-    console.log(allEntries, count);
-    //sicherstellen, dass es nur 10 Einträge gibt
 
-    count > 10 &&
-      (await collection.findOneAndDelete({}, { sort: { points: 1 } }));
-    const allEntries2 = await collection.find({}).toArray();
-    console.log("updatedListe", allEntries2);
+    res.send({ leaderboard: allEntries, err });
   } catch {
     res.status(500).send("Fehler in der Datenbank");
-    return;
   }
-
-  res.send("Bestenliste aktualisiert");
 });
 
+// Startet den Server auf Port 3001
 app.listen(port, async () => {
   console.log(`Server läuft auf Port ${port}`);
 });

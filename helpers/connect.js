@@ -8,7 +8,6 @@ const connectDatabase = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log("Verbunden mit MongoDB");
     return (db = client.db(dbName));
   } catch (error) {
     console.error(error);
