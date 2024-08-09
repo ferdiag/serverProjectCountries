@@ -5,6 +5,7 @@ const data = require("./data/data.js");
 const cors = require("cors");
 const connectDatabase = require("./utils/connect.js");
 const updateLeaderboard = require("./controllers/Leaderboard.js");
+require("dotenv").config();
 
 app.use(express.json());
 app.use(cors());
@@ -48,7 +49,7 @@ app.post("/getAndUpdateLeaderboard", async (req, res) => {
 });
 
 // Startet den Server auf Port 3001
-app.listen(port, async () => {
+app.listen(process.env.PORT || port, async () => {
   console.log(`Server läuft auf Port ${port}`);
 });
 module.exports = app;
