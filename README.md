@@ -13,8 +13,8 @@ Schritte zur Installation
 
     bash
 
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/ferdiag/serverProjectCountries
+cd serverProjectCountries
 
 Abhängigkeiten installieren:
 
