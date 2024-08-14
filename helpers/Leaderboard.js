@@ -1,7 +1,5 @@
 const updateLeaderboard = async (data, collection) => {
   try {
-    // Stellt eine Verbindung zur Datenbank her, falls nicht vorhanden
-
     await collection.insertOne(data);
 
     // Löscht den niedrigsten Highscore, falls mehr als 10 Einträge vorhanden sind
