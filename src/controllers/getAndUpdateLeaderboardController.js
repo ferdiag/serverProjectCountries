@@ -1,5 +1,5 @@
-const connectDatabase = require("../utils/connect");
 const updateLeaderboard = require("../helpers/Leaderboard");
+const connectDatabase = require("../utils/connect");
 
 const getAndUpdateLeaderboard = async (req, res) => {
   let db;
