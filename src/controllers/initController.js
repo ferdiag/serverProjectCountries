@@ -1,5 +1,14 @@
 const data = require("../data/data.js");
-const initController = (req, res) => {
-  res.json(data);
+const connectDatabase = require("../utils/connect.js");
+const initController = async (req, res) => {
+  let db;
+  let client;
+
+  if (!db) {
+    [db, client] = await connectDatabase(res);
+    const collection = await db.collection("highscore");
+    const leaderboard = await collection.find({}).toArray();
+    res.json({ data, leaderboard });
+  }
 };
 module.exports = initController;
