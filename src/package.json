@@ -13,6 +13,10 @@
     "mongo": "^0.1.0",
     "nodemon": "^3.1.4"
   },
+  "scripts": {
+    "start": "nodemon",
+    "test": "jest"
+  },
   "devDependencies": {
     "jest": "^29.7.0",
     "supertest": "^7.0.0"

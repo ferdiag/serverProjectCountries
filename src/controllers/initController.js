@@ -9,6 +9,7 @@ const initController = async (req, res) => {
     const collection = await db.collection("highscore");
     const leaderboard = await collection.find({}).toArray();
     res.json({ data, leaderboard });
+    client.close();
   }
 };
 module.exports = initController;
