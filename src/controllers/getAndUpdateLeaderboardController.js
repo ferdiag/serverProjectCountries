@@ -14,13 +14,12 @@ const getAndUpdateLeaderboard = async (req, res) => {
     }
   }
   const collection = await db.collection("highscore");
-
+  console.log(data.name);
   //setzen eines eventuellen Fehlers beim update, ansonsten wird undefinded wieder gegeben
   const isUpdateSucessful =
-    req.body.name != (await updateLeaderboard(data, collection));
+    data.name && (await updateLeaderboard(data, collection));
   try {
-    const allEntries = await collection.find({}).toArray();
-
+    const allEntries = await collection.find({}).sort({ points: -1 }).toArray();
     res.send({
       leaderboard: allEntries,
       err: isUpdateSucessful

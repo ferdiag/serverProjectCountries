@@ -8,8 +8,9 @@ const initController = async (req, res) => {
     [db, client] = await connectDatabase(res);
     const collection = await db.collection("highscore");
     const leaderboard = await collection.find({}).toArray();
+    // const leaderboard = await collection.deleteMany({});
+
     res.json({ data, leaderboard });
-    client.close();
   }
 };
 module.exports = initController;
